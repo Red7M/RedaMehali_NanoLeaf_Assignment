@@ -7,12 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
-import androidx.cardview.widget.CardView
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -86,6 +84,12 @@ class MyDevicesAdapter(val deviceControlListener: DeviceControlListener) : Recyc
             override fun onStartTrackingTouch(p0: SeekBar?) {}
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
+
+        // Set listener on rectangle clicks
+        holder.deviceRectangleColor.setOnClickListener {
+            // Click action happens
+            deviceControlListener.rectangleClickListener(holder.adapterPosition)
+        }
     }
 
     /**
@@ -150,6 +154,15 @@ class MyDevicesAdapter(val deviceControlListener: DeviceControlListener) : Recyc
     }
 
     /**
+     * Sets device new color and refresh UI data
+     */
+    fun setDeviceNewHueColor(colorHsv: Array<Float?>, position: Int) {
+        devicesList[position].rectangleColor =
+                Color.HSVToColor(floatArrayOf(colorHsv[0]!!, colorHsv[1]!!, colorHsv[2]!!))
+        notifyDataSetChanged()
+    }
+
+    /**
      * Calculates the average brightness of all devices
      *
      * @return average brightness as an integer
@@ -202,5 +215,6 @@ class MyDevicesAdapter(val deviceControlListener: DeviceControlListener) : Recyc
     interface DeviceControlListener {
         fun onSwitchClickListener(position: Int, isOn: Boolean)
         fun onBrightnessControlListener(position: Int, brightness: Int)
+        fun rectangleClickListener(position: Int)
     }
 }

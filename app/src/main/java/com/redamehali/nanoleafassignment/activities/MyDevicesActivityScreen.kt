@@ -53,6 +53,9 @@ class MyDevicesActivityScreen : AppCompatActivity(), MyDevicesAdapter.DeviceCont
             globalBrightnessBar.progress = myDevicesAdapter.getAverageBrightness()
         })
 
+        devicesViewModel.getColorHueLiveData().observe(this, { colorHsv ->
+            myDevicesAdapter.setDeviceNewHueColor(colorHsv, colorHsv[3]!!.toInt())})
+
         setGlobalPowerAndBrightnessListeners();
     }
 
@@ -93,5 +96,11 @@ class MyDevicesActivityScreen : AppCompatActivity(), MyDevicesAdapter.DeviceCont
         devicesViewModel.deviceChange(
             myDevicesAdapter.getDeviceAtPosition(position),
             DeviceEnumMeta.BRIGHTNESS)
+    }
+
+    override fun rectangleClickListener(position: Int) {
+        devicesViewModel.retrieveColor(
+                myDevicesAdapter.getDeviceAtPosition(position),
+                position)
     }
 }

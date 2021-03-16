@@ -37,4 +37,19 @@ class DevicesViewModel(application: Application) : AndroidViewModel(application)
             commandCenterRepository.processDeviceRequests(device, deviceEnumMeta)
         }
     }
+
+    /**
+     * Calls for color request from commandCenterRepository
+     */
+    fun retrieveColor(device: Device, position: Int) {
+        commandCenterRepository.colorHueRequest(device, position)
+    }
+
+    /**
+     * returns Hue color Mutable LiveData
+     */
+    fun getColorHueLiveData() : MutableLiveData<Array<Float?>> {
+        return commandCenterRepository.getColor()
+    }
+
 }
