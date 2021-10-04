@@ -36,8 +36,9 @@ class DevicesHelper {
 
             for (i in sequenceSplit.indices step 3) {
                 val device = Device(
-                    homeLights[Random.nextInt(homeLights.size)],
-                    colors[Random.nextInt(colors.size)])
+                    myDeviceName = homeLights[Random.nextInt(homeLights.size)],
+                    rectangleColor = colors[Random.nextInt(colors.size)]
+                )
 
                 if (sequenceSplit[i].length == 5) {
                     device.id = sequenceSplit[i]

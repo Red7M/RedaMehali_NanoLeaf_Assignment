@@ -2,6 +2,7 @@ package com.redamehali.nanoleafassignment.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.CompoundButton
 import android.widget.SeekBar
 import androidx.appcompat.widget.SwitchCompat
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.redamehali.nanoleafassignment.R
 import com.redamehali.nanoleafassignment.adapters.MyDevicesAdapter
 import com.redamehali.nanoleafassignment.constants.DeviceEnumMeta
+import com.redamehali.nanoleafassignment.models.Device
 import com.redamehali.nanoleafassignment.viewmodels.DevicesViewModel
 
 /**
@@ -28,6 +30,8 @@ class MyDevicesActivityScreen : AppCompatActivity(), MyDevicesAdapter.DeviceCont
     private lateinit var globalDevicesSwitch : SwitchCompat
     private lateinit var globalBrightnessBar : SeekBar
 
+    private val TAG = "MyDevicesActivityScreen"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,17 +44,26 @@ class MyDevicesActivityScreen : AppCompatActivity(), MyDevicesAdapter.DeviceCont
         setRecyclerViewAndAdapter()
 
         // Instantiate view model
-        devicesViewModel = ViewModelProvider(this).get(DevicesViewModel::class.java)
+        devicesViewModel = ViewModelProvider(this).get(DevicesViewModel(application)::class.java)
 
         // Retrieve data from view model
-        devicesViewModel.retrieveData()
+//        devicesViewModel.retrieveDataInAscendingOrder()
+        devicesViewModel.retrieveAllDevices()
 
         // Observe view model
-        devicesViewModel.devicesInfoLiveData.observe(this, {
-            orderedDevices ->
-            myDevicesAdapter.setDevicesList(orderedDevices)
-            globalDevicesSwitch.isChecked = myDevicesAdapter.getGlobalPowerSwitchState()
-            globalBrightnessBar.progress = myDevicesAdapter.getAverageBrightness()
+//        devicesViewModel.ascendedDevicesLiveData.observe(this, {
+//            orderedDevices ->
+//            myDevicesAdapter.setDevicesList(orderedDevices)
+//            globalDevicesSwitch.isChecked = myDevicesAdapter.getGlobalPowerSwitchState()
+//            globalBrightnessBar.progress = myDevicesAdapter.getAverageBrightness()
+//        })
+
+        devicesViewModel.devicesLiveData.observe(this, {
+                listOfDevices ->
+            for (device in listOfDevices) {
+                Log.d(TAG, "device ${device.id} name is ${device.myDeviceName}, brightness: ${device.brightness}, and power is: ${device.isOn}")
+            }
+            myDevicesAdapter.devicesList = listOfDevices as ArrayList<Device>
         })
 
         devicesViewModel.getColorHueLiveData().observe(this, { colorHsv ->

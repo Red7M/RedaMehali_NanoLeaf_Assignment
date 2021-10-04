@@ -17,16 +17,21 @@ import java.util.*
  *
  * Created by Reda Mehali on 3/8/21.
  */
-class DevicesViewModel(application: Application) : AndroidViewModel(application) {
+class DevicesViewModel public constructor(application: Application) : AndroidViewModel(application) {
 
-    val devicesInfoLiveData = MutableLiveData<TreeMap<Int, Device>>()
-    private val commandCenterRepository = CommandCenterRepository()
+    val ascendedDevicesLiveData = MutableLiveData<TreeMap<Int, Device>>()
+    val devicesLiveData = MutableLiveData<List<Device>>()
+    private val commandCenterRepository = CommandCenterRepository(application.applicationContext)
 
     /**
      * Calls data retrieval from the commandCenterRepository
      */
-    fun retrieveData() {
-        devicesInfoLiveData.value = commandCenterRepository.retrieveAscendingParsedData()
+    fun retrieveDataInAscendingOrder() {
+        ascendedDevicesLiveData.value = commandCenterRepository.retrieveAscendingParsedData()
+    }
+
+    fun retrieveAllDevices() {
+        devicesLiveData.value = commandCenterRepository.retrieveAllDevicesData()
     }
 
     /**

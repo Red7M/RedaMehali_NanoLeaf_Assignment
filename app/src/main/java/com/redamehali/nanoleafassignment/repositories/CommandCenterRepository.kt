@@ -1,14 +1,18 @@
 package com.redamehali.nanoleafassignment.repositories
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.room.Room
 import com.redamehali.nanoleafassignment.constants.DeviceEnumMeta
 import com.redamehali.nanoleafassignment.data.MockData
+import com.redamehali.nanoleafassignment.models.AppDatabase
 import com.redamehali.nanoleafassignment.models.Device
 import com.redamehali.nanoleafassignment.utils.DevicesHelper
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 /**
@@ -19,13 +23,41 @@ import kotlin.random.Random
  *
  * Created by Reda Mehali on 3/8/21.
  */
-class CommandCenterRepository {
+class CommandCenterRepository(applicationContext: Context) {
 
     private val TAG = "CommandCenterRepository"
     private val TURNED_ON = "Turned On"
     private val TURNED_OFF = "Turned Off"
 
     private val colorLiveData = MutableLiveData<Array<Float?>>()
+    private var db : AppDatabase
+
+
+    init {
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "database-device")
+            .allowMainThreadQueries().build()
+    }
+
+
+    fun retrieveAllDevicesData(): List<Device> {
+        val deviceDao = db.deviceDao()
+        var devices = deviceDao.getAll()
+
+        // Insert data from mock DB if list of devices returned from DB is empty
+        if (devices.isEmpty()) {
+            devices = buildDeviceList()
+            deviceDao.insertAll(*devices.toTypedArray())
+        }
+        return devices
+    }
+
+    fun buildDeviceList(): ArrayList<Device> {
+        return DevicesHelper.parseStringSequenceToDeviceList(
+            MockData.devicesSequences,
+            MockData.homeLights,
+            MockData.colors
+        )
+    }
 
     /**
      * Retrieves data, and orders it into an ascending order

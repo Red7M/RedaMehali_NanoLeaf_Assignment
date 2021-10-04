@@ -63,7 +63,7 @@ class MyDevicesAdapter(val deviceControlListener: DeviceControlListener) : Recyc
         // Bind views to data
         holder.cardView.setCardBackgroundColor(color)
         holder.deviceRectangleColor.setBackgroundColor(color)
-        holder.deviceName.text = deviceItem.name
+        holder.deviceName.text = deviceItem.myDeviceName
         holder.deviceId.text = deviceItem.id
         holder.deviceOnOff.isChecked = deviceItem.isOn
         holder.brightnessSeekBar.progress = deviceItem.brightness!!
